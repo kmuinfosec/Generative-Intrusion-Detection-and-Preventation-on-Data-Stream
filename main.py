@@ -7,7 +7,7 @@ def main(pcap_pkl_path, save_path):
         data = pickle.load(f)
 
     payloads = []
-    for payload, label in data:
+    for payload in data:
         payloads.append(payload)
 
     cluster_signatures, no_group_signatures = GIPS(strings=payloads, thetaJ=0.6, TH=0.6)

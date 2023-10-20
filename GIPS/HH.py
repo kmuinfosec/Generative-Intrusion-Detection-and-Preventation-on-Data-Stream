@@ -185,6 +185,102 @@ class RealTimeGen:
         self.hh2.fixSubstringFrequency()
         return sorted(list(self.hh2.items.items()), key=lambda x: -x[1])
 
+def THH(
+    packets: list,
+    k: int = 4,
+    hh1_size: int = 512,
+    hh2_size: int = 512,
+    hh3_size: int = 512,
+    ratio: float = 0.8,
+    deduplication: bool = False,
+):
+
+    hh1 = HeavyHitter(hh1_size)
+    hh2 = HeavyHitter(hh2_size)
+    hh3 = HeavyHitter(hh3_size)
+
+    counter2 = 0
+
+    for packet in packets:
+
+        s_temp = ''
+        temp_counter = 0
+        strings_counter = 0
+        signature_set = set()
+        local_signset = set()
+
+        h = len(packet)
+        for i in range(h - k + 1):
+            chunk = packet[i : i + k]
+            counter1 = hh1.update(chunk)
+
+            if counter1 > 0:
+                if s_temp == '':
+                    s_temp = chunk
+                    temp_counter = counter1
+                else:
+                    if counter1 > ratio * temp_counter:
+                        s_temp += chunk[-1]
+                        temp_counter = counter1
+                    else:
+                        if s_temp != '' and (s_temp not in local_signset):
+                            counter2 = hh2.update(s_temp)
+                            if deduplication:
+                                local_signset.add(s_temp)
+                            if counter2 > ratio * strings_counter:
+                                signature_set.add(s_temp)
+                                strings_counter = counter2
+                        s_temp = chunk
+                        temp_counter = counter1
+            else:
+                if s_temp != '' and (s_temp not in local_signset):
+                    counter2 = hh2.update(s_temp)
+                    if deduplication:
+                        local_signset.add(s_temp)
+                    if counter2 > ratio * strings_counter:
+                        signature_set.add(s_temp)
+                        strings_counter = counter2
+                temp_counter = 0
+                s_temp = ''
+
+        if s_temp != '' and (s_temp not in local_signset):
+            counter2 = hh2.update(s_temp)
+            if counter2 > ratio * strings_counter:
+                signature_set.add(s_temp)
+                strings_counter = counter2
+            
+        if len(signature_set) != 0:
+            tmp = set()
+            for sign in signature_set:
+                if sign in hh2.items.keys():
+                    tmp.add(sign)
+            a = '---'.join(sorted(list(tmp)))
+            if len(a)!=0:
+                hh3.update(a)
+
+    hh2.fixSubstringFrequency()
+
+    ans = []
+    Lsigs = list(hh2.items.items())
+    Lsigs.sort(key=lambda x: -x[1])
+
+    Lsets = set(list(hh3.items.keys()))
+
+    for sign, freq in Lsigs:
+
+        flag = False
+        tmp_set = set()
+        for concat in Lsets:
+            if sign in concat:
+                tmp_set.add(concat)
+                flag = True
+
+        Lsets -= tmp_set
+
+        if flag:
+            ans.append((sign, freq))
+
+    return ans
 
 if __name__ == '__main__':
     print(DHH(packets=['httphttp'] * 30 + ['httpttp']*20, ratio=0.1, deduplication=True))
