@@ -63,3 +63,14 @@ if __name__ == '__main__':
          K=64, M=2048, thetaJ=0.6,
          window_size=3, vector_size=512, eps=0.6, minpts=5,
          ngram=4, hh1_size=3000, hh2_size=3000, ratio=0.1)
+    
+"""
+TODO
+- hyperparameter configurization
+- add utils.py
+- component modularization & implement
+- add README.md
+- add docs - code document, presentation pdf
+- add dataset preprocess func.
+- add evaluation func.
+"""
