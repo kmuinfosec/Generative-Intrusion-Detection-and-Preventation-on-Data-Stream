@@ -12,7 +12,7 @@ def main(payload_path, signature_path, stopword_path,
         payloads = pickle.load(f)
 
     # big group identification
-    minhashed_virtual_vectors = MV2(payloads, K, M)
+    minhashed_virtual_vectors = MV2(payloads, window_size, K, M)
     big_group_indices = JIG(minhashed_virtual_vectors, thetaJ)
 
     big_group_payloads = []

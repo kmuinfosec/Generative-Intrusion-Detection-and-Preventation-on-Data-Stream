@@ -2,7 +2,7 @@ import numpy as np
 
 from core.utils import AEchunking, minHash
 
-def MV2(payloads, K, M):
+def MV2(payloads, window_size, K, M):
     
     minhashed_virtual_vectors = []
     for payload in payloads:

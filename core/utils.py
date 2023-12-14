@@ -1,4 +1,5 @@
 import datasketch
+import numpy as np
 
 def AEchunking(doc, W):
     chunks = []
@@ -23,4 +24,4 @@ def minHash(chunks, K, SEED=42):
     signature = datasketch.minhash.MinHash(num_perm=K, seed=SEED)
     for chunk in chunks:
         signature.update(chunk.encode())
-    return signature.digest()
+    return np.array(signature.digest(), np.int32)
