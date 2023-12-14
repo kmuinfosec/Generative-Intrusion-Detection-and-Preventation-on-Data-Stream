@@ -1,16 +1,6 @@
 import pickle
 
-def MV2(payloads, K, M):
-    pass 
-
-def JIG(vectors, thetaJ):
-    pass 
-
-def SG2(payloads, window_size, vector_size, eps, minpts, ngram, hh1_size, hh2_size, ratio):
-    pass
-
-def AWL(payloads, ngram, hh1_size, hh2_size, ratio):
-    pass
+from core.GIPS import MV2, JIG, SG2, AWL
 
 def main(payload_path, signature_path, stopword_path,
          K, M, thetaJ,
@@ -68,7 +58,6 @@ if __name__ == '__main__':
 TODO
 - hyperparameter configurization
 - add utils.py
-- component modularization & implement
 - add README.md
 - add docs - code document, presentation pdf
 - add dataset preprocess func.
