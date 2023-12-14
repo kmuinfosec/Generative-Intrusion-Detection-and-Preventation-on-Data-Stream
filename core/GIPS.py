@@ -100,4 +100,14 @@ def SG2(payloads, window_size, vector_size, eps, minpts, ngram, hh1_size, hh2_si
     return cluster_signatures
 
 def AWL(payloads, ngram, hh1_size, hh2_size, ratio):
-    pass
+    
+    stopwords = DHH(
+        packets = payloads,
+        k = ngram,
+        hh1_size = hh1_size,
+        hh2_size = hh2_size,
+        ratio = ratio,
+        deduplication = True,
+    )
+
+    return stopwords
