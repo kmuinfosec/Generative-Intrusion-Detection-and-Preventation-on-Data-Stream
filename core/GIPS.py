@@ -1,5 +1,8 @@
+import hashlib
+import sklearn
 import numpy as np
 
+from core.HH import DHH
 from core.utils import AEchunking, minHash, IORA
 
 def MV2(payloads, window_size, K, M):
@@ -37,8 +40,64 @@ def JIG(vectors, thetaJ):
     
     return big_group_indices
 
+def contents2count(chunks, vec_size):
+    vector = [0] * vec_size
+    for chunk in set(chunks):
+        chunk_fh = int(hashlib.md5(chunk.encode()).hexdigest(),16) % vec_size
+        vector[chunk_fh] += 1
+    return vector
+
 def SG2(payloads, window_size, vector_size, eps, minpts, ngram, hh1_size, hh2_size, ratio):
-    pass
+    
+    # clustering
+    fine_vectors = []
+    for payload in payloads:
+        chunks = AEchunking(payload, window_size)
+        vector = np.zeros(vector_size, dtype=np.int8)
+        for chunk in set(chunks):
+            chunk_idx = int(hashlib.md5(chunk.encode()).hexdigest(),16) % vector_size
+            vector[chunk_idx] += 1
+
+        fine_vectors.append(vector)
+
+    model = sklearn.cluster.DBSCAN(eps=1-eps, min_samples=minpts, metric='cosine', n_jobs=None)
+    model.fit(fine_vectors)
+
+    cluster_labels = model.labels_
+
+    # remove anomal data, sort by frequency
+    cluster_dict = dict()
+    for payload, cluster_label in zip(payloads, cluster_labels):
+        
+        if cluster_label == -1:
+            continue
+        
+        if cluster_label not in cluster_dict.keys():
+            cluster_dict[cluster_label] = []
+        cluster_dict[cluster_label].append(payload)
+
+    cluster_counters = []
+    for cluster_label in cluster_dict.keys():
+        cluster_counters.append((cluster_label, len(cluster_dict[cluster_label])))
+    cluster_counters.sort(key=lambda x: -x[1])
+
+    # generate signature groups
+    cluster_signatures = dict()
+    for cluster_label, _ in cluster_counters:
+        
+        cluster_payloads = cluster_dict[cluster_label]
+        signatures = DHH(
+            packets = cluster_payloads,
+            k = ngram,
+            hh1_size = hh1_size,
+            hh2_size = hh2_size,
+            ratio = ratio,
+            deduplication = True,
+        )
+
+        cluster_signatures[cluster_label] = (signatures, len(cluster_payloads))
+
+    return cluster_signatures
 
 def AWL(payloads, ngram, hh1_size, hh2_size, ratio):
     pass

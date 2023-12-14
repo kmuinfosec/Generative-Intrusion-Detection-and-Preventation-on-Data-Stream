@@ -57,7 +57,6 @@ if __name__ == '__main__':
 """
 TODO
 - hyperparameter configurization
-- add utils.py
 - add README.md
 - add docs - code document, presentation pdf
 - add dataset preprocess func.
