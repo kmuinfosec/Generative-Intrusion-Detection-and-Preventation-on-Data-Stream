@@ -1,5 +1,6 @@
 # import module
 import os
+import pickle
 import configparser
 
 import decimal
@@ -123,9 +124,12 @@ if __name__ == '__main__':
     pcap_path = properties.get('PATH', 'pcap_path')
     flow_path = properties.get('PATH', 'flow_path')
 
-    flow_dict = make_flow_dict(flow_path)
+    payload_path = properties.get('PATH', 'payload_path')
+    label_path = properties.get('PATH', 'label_path')
 
     # read dataset
+    flow_dict = make_flow_dict(flow_path)
+
     packets = []
     for pcap_name in os.listdir(pcap_path):
         if pcap_name.split('.')[-1] in ['pcap', 'done']:
@@ -134,5 +138,16 @@ if __name__ == '__main__':
     # packets 데이터 형태
     # (payload 정보, 플로우 라벨, 5-tuple)
     # 플로우 라벨은 'unknown', 'BENIGN{flow_id}', 'MALWARE{flow_id}' 로 구성
+            
+    payloads = []
+    labels = []
 
-    ## packets pickle로 저장 필요
+    for payload, flow_label, tuple5 in packets:
+        payloads.append(payload)
+        labels.append(flow_label)
+
+    with open(payload_path, 'rb') as f:
+        pickle.dump(payloads, f)
+
+    with open(label_path, 'rb') as f:
+        pickle.dump(labels, f)
