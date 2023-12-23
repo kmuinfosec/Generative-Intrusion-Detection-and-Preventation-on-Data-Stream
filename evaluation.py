@@ -1,7 +1,7 @@
 import pickle
 import configparser
 
-def get_confusion_matrix(payloads, labels, signatures):
+def get_confusion_matrix(payloads: list, labels: list, signatures: list):
     labelset = dict()
     for payload, label in zip(payloads, labels):
         if label not in labelset.keys():

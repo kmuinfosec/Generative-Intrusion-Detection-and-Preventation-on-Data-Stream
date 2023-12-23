@@ -3,10 +3,10 @@ import configparser
 
 from core.GIPS import MV2, JIG, SG2, AWL
 
-def main(payload_path, signature_path, stopword_path,
-         K, M, thetaJ,
-         window_size, vector_size, eps, minpts,
-         ngram, hh1_size, hh2_size, ratio):
+def main(payload_path: str, signature_path: str, stopword_path: str,
+         K: int, M: int, thetaJ: float,
+         window_size: int, vector_size: int, eps: float, minpts: int,
+         ngram: int, hh1_size: int, hh2_size: int, ratio: float):
     
     # payloads = [payload0, payload1, payload2, ...]
     with open(payload_path, 'rb') as f:

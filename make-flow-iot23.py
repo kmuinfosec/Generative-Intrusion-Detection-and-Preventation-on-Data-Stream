@@ -8,7 +8,7 @@ import decimal
 from scapy.all import *
 from tqdm.auto import tqdm
 
-def decode_ascii(payload):
+def decode_ascii(payload: str):
     arr, cur = [], ''
     for char in payload:
         cur += char
@@ -19,7 +19,7 @@ def decode_ascii(payload):
     
     return ''.join(arr)
 
-def make_flow_dict(flow_path):
+def make_flow_dict(flow_path: str):
     
     # iot23 flow 파일 기준 컬럼 정보 등 제거
     reader = open(flow_path, 'r')
@@ -60,7 +60,7 @@ def make_flow_dict(flow_path):
 
     return flow_dict
 
-def get_payloads_from_pcap_with_flow(pcap_path, flow_dict):
+def get_payloads_from_pcap_with_flow(pcap_path: str, flow_dict: dict):
     if os.path.getsize(pcap_path) == 0:
         return []
 
