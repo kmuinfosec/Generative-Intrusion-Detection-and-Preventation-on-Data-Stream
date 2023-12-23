@@ -38,6 +38,8 @@ if __name__ == '__main__':
 
     payload_path = properties.get('PATH', 'payload_path')
     label_path = properties.get('PATH', 'label_path')
+    signature_path = properties.get('PATH', 'signature_path')
+    stopword_path = properties.get('PATH', 'stopword_path')
 
     with open(payload_path, 'rb') as f:
         payloads = pickle.load(f)
@@ -46,7 +48,11 @@ if __name__ == '__main__':
         labels = pickle.load(f)
 
     ## signatures 몇 개 쓸건지 필터링 필요
-    with open(SIGN_PATH, 'rb') as f:
+    with open(signature_path, 'rb') as f:
         signatures = pickle.load(f)
+
+    ## stopword (AWL) 사용방법 필터링 추가 필요
+    with open(stopword_path, 'rb') as f:
+        stopwords = pickle.load(f)
 
     print(get_confusion_matrix(payloads, labels, signatures))
