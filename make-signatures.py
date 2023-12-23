@@ -80,5 +80,4 @@ if __name__ == '__main__':
 TODO
 - add README.md
 - add docs - code document, presentation pdf
-- add evaluation func.
 """
